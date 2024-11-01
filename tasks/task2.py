@@ -188,32 +188,15 @@ def task_two(chosen_csv):
     number_of_clusters = [2, 3, 5]
     linkages = ["single", "complete"]
 
-    data = read_csv(chosen_csv, delimiter=';')
-    normalized_data = normalize(data)
-    standardized_data = standardize(data)
+    data = np.array(read_csv(chosen_csv, delimiter=';'))
+    normalized_data = np.array(normalize(data))
+    standardized_data = np.array(standardize(data))
 
     formatted_csv_file_name = chosen_csv.split("/")[-1].split(".")[0]
 
     for cluster in number_of_clusters:
         for metric in metrics:
             for linkage in linkages:
-
-                if metric == "euclidean":
-                    metric_function = euclidean_distance_matrix
-                elif metric == "manhattan":
-                    metric_function = manhattan_distance_matrix
-                elif metric == "cosine":
-                    metric_function = cosine_distance_matrix
-                else:
-                    raise ValueError("Unknown metric")
-
-                if linkage == "single":
-                    linkage_function = np.minimum
-                elif linkage == "complete":
-                    linkage_function = np.maximum
-                else:
-                    raise ValueError("Unknown linkage")
-
                 for processed_data, preprocess_name in zip([data, normalized_data, standardized_data],
                                                            ["original", "normalized", "standardized"]):
                     # check if plot already exists
@@ -226,8 +209,7 @@ def task_two(chosen_csv):
                           f"Linkage: {linkage} - Clusters: {cluster} - Preprocess: {preprocess_name}")
 
                     save_path = f"../results/task2/normalized_graphs/"
-                    aggregated_clusters = agglomerate_clustering(processed_data, metric_function, linkage_function,
-                                                                 cluster)
+                    aggregated_clusters = agglomerate_clustering(processed_data, metric, linkage, cluster)
                     save_plot(processed_data, aggregated_clusters,
                               f"{formatted_csv_file_name}_{cluster}_{metric}_{linkage}_{preprocess_name}", save_path)
 
