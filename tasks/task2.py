@@ -21,6 +21,9 @@ def get_all_csv_path():
                 all_paths.append(os.path.join(root, file))
     # windows fix  - replace backslashes with forward slashes
     all_paths = [path.replace("\\", "/") for path in all_paths]
+    # remove the winequality-red.csv file from following assignment
+    all_paths.remove("../datasets/data_clustering/winequality-red.csv")
+
     return all_paths
 
 
