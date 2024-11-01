@@ -1,6 +1,6 @@
-import os
+import numpy as np
 import math
-import time
+import os
 from matplotlib import pyplot as plt
 
 # virdis color palette
@@ -25,65 +25,59 @@ def get_all_csv_path():
 
 
 def read_csv(file_path, delimiter=';'):
-    with open(file_path, 'r') as f:
-        lines = f.readlines()
-        _data = [list(map(float, line.strip().split(delimiter))) for line in lines if line.strip()]
-    return _data
+    return np.loadtxt(file_path, delimiter=delimiter)
 
 
-def euclidean_distance(x, y):
-    return math.sqrt((x[0] - y[0]) ** 2 + (x[1] - y[1]) ** 2)
+def euclidean_distance_matrix(data):
+    return np.sqrt(((data[:, np.newaxis] - data) ** 2).sum(axis=2))
 
 
-def manhattan_distance(x, y):
-    return abs(x[0] - y[0]) + abs(x[1] - y[1])
+def manhattan_distance_matrix(data):
+    return np.abs(data[:, np.newaxis] - data).sum(axis=2)
 
 
-def cosine_distance(x, y):
-    dot_product = sum(a * b for a, b in zip(x, y))
-    norm_x = math.sqrt(sum(a ** 2 for a in x))
-    norm_y = math.sqrt(sum(b ** 2 for b in y))
-    return 1 - (dot_product / (norm_x * norm_y))
-
-
-def single_linkage(cluster1, cluster2, metric):
-    min_distance = float("inf")
-    for point1 in cluster1:
-        for point2 in cluster2:
-            distance = metric(point1, point2)
-            if distance < min_distance:  # the minimum distance between two clusters
-                min_distance = distance
-    return min_distance
-
-
-def complete_linkage(cluster1, cluster2, metric):
-    max_distance = 0
-    for point1 in cluster1:
-        for point2 in cluster2:
-            distance = metric(point1, point2)
-            if distance > max_distance:  # the maximum distance between two clusters
-                max_distance = distance
-    return max_distance
+def cosine_distance_matrix(data):
+    dot_product = np.dot(data, data.T)  # dot product of data with itself
+    norm = np.linalg.norm(data, axis=1)  # norm of each row
+    return 1 - (dot_product / np.outer(norm, norm))  # cosine distance matrix
 
 
 def agglomerate_clustering(data, metric, linkage, n_clusters):
-    clusters = [[point] for point in data]  # Each point is a cluster at the beginning
+    if metric == "euclidean":
+        distance_matrix = euclidean_distance_matrix(data)
+    elif metric == "manhattan":
+        distance_matrix = manhattan_distance_matrix(data)
+    elif metric == "cosine":
+        distance_matrix = cosine_distance_matrix(data)
+    else:
+        raise ValueError("Unknown metric")
+
+    np.fill_diagonal(distance_matrix, np.inf)  # Set diagonal to infinity to avoid self-comparison
+    clusters = [[i] for i in range(len(data))]  # Initialize clusters
+
     while len(clusters) > n_clusters:  # Merge clusters until the desired number of clusters is reached
         print(f"Clusters: {len(clusters)}/{n_clusters}")
-        min_distance = float("inf")
-        closest_clusters = None
-        for i, cluster1 in enumerate(clusters):
-            for j, cluster2 in enumerate(clusters):  # Compare all clusters
-                if i == j:  # Skip the same cluster
-                    continue
-                distance = linkage(cluster1, cluster2, metric)  # Calculate the distance between two clusters
-                if distance < min_distance:  # Find the closest clusters
-                    min_distance = distance  # Update the minimum distance for the closest clusters
-                    closest_clusters = (i, j)  # Update the closest clusters for merging
-        i, j = closest_clusters  # Merge the closest clusters
-        clusters[i].extend(clusters[j])  # Add the second cluster to the first cluster
-        clusters.pop(j)  # Remove the second cluster since it is merged
-    return clusters
+        # Find the closest clusters by finding the minimum distance in the distance matrix
+        closest_clusters = np.unravel_index(np.argmin(distance_matrix), distance_matrix.shape)
+        i, j = sorted(closest_clusters)
+
+        clusters[i].extend(clusters[j])  # Merge the clusters
+        clusters.pop(j)  # Remove the merged cluster since it is no longer needed
+
+        if linkage == "single":  # Update the distance matrix based on the linkage
+            new_distances = np.minimum(distance_matrix[i], distance_matrix[j])
+        elif linkage == "complete":
+            new_distances = np.maximum(distance_matrix[i], distance_matrix[j])
+        else:
+            raise ValueError("Unknown linkage")
+
+        distance_matrix[i] = new_distances  # Update the distance matrix
+        distance_matrix[:, i] = new_distances  # Update the distance matrix (symmetric)
+        distance_matrix = np.delete(distance_matrix, j, axis=0)  # Remove the merged cluster from the distance matrix
+        distance_matrix = np.delete(distance_matrix, j, axis=1)  # Remove the merged cluster from the distance matrix
+        np.fill_diagonal(distance_matrix, np.inf)  # Set diagonal to infinity to avoid self-comparison
+
+    return [[data[idx] for idx in cluster] for cluster in clusters]  # Return the clusters
 
 
 def save_plot(data, clusters, title, save_path):
@@ -167,24 +161,8 @@ def task_one():
         for cluster in number_of_clusters:
             for metric in metrics:
                 for linkage in linkages:
-                    time_start = time.time()
                     data = read_csv(csv_file, delimiter=';')
 
-                    if metric == "euclidean":
-                        metric_function = euclidean_distance
-                    elif metric == "manhattan":
-                        metric_function = manhattan_distance
-                    else:
-                        raise ValueError("Unknown metric")
-
-                    if linkage == "single":
-                        linkage_function = single_linkage
-                    elif linkage == "complete":
-                        linkage_function = complete_linkage
-                    else:
-                        raise ValueError("Unknown linkage")
-
-                    # print all the parameters
                     print(f"Processing CSV file: {csv_file} - "
                           f"Metric: {metric} - Linkage: {linkage} - Clusters: {cluster}")
 
@@ -197,10 +175,9 @@ def task_one():
                         print("Plot already exists, skipping...")
                         continue
 
-                    aggregated_clusters = agglomerate_clustering(data, metric_function, linkage_function, cluster)
+                    aggregated_clusters = agglomerate_clustering(data, metric, linkage, cluster)
                     save_plot(data, aggregated_clusters,
                               f"{formatted_csv_file_name}_{cluster}_{metric}_{linkage}", save_path)
-                    print(f"Time elapsed: {time.time() - time_start}")
 
 
 def task_two(chosen_csv):
@@ -217,10 +194,22 @@ def task_two(chosen_csv):
     for cluster in number_of_clusters:
         for metric in metrics:
             for linkage in linkages:
-                time_start = time.time()
 
-                metric_function = cosine_distance
-                linkage_function = single_linkage if linkage == "single" else complete_linkage
+                if metric == "euclidean":
+                    metric_function = euclidean_distance_matrix
+                elif metric == "manhattan":
+                    metric_function = manhattan_distance_matrix
+                elif metric == "cosine":
+                    metric_function = cosine_distance_matrix
+                else:
+                    raise ValueError("Unknown metric")
+
+                if linkage == "single":
+                    linkage_function = np.minimum
+                elif linkage == "complete":
+                    linkage_function = np.maximum
+                else:
+                    raise ValueError("Unknown linkage")
 
                 for processed_data, preprocess_name in zip([data, normalized_data, standardized_data],
                                                            ["original", "normalized", "standardized"]):
@@ -238,7 +227,6 @@ def task_two(chosen_csv):
                                                                  cluster)
                     save_plot(processed_data, aggregated_clusters,
                               f"{formatted_csv_file_name}_{cluster}_{metric}_{linkage}_{preprocess_name}", save_path)
-                    print(f"Time elapsed: {time.time() - time_start}")
 
 
 if __name__ == '__main__':
