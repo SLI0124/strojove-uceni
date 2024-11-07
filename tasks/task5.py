@@ -53,28 +53,28 @@ def evaluate_feature(df, label, feature):
     return feature, best_split_val, best_gini
 
 
-def branch(df, YLabel, k, n):
+def branch(df, y_label, k, n):
     if k == n:
         # Reached bottom level, no further branching
-        label = df[YLabel].value_counts().index[0]  # Most common label in the split
+        label = df[y_label].value_counts().index[0]  # Most common label in the split
         this_branch = Branch((k, ('END', label)))
         return this_branch
 
     gini_index_main = 1
-    for value in df[YLabel].unique():
-        class_count = df.loc[df[YLabel] == value][YLabel].count()
+    for value in df[y_label].unique():
+        class_count = df.loc[df[y_label] == value][y_label].count()
         total_count = len(df)
         gini_index_main -= pow(class_count / total_count, 2)
 
     if gini_index_main == 0:
         # Branch is pure, no further branching
-        label = df[YLabel].value_counts().index[0]  # Most common label in the split
+        label = df[y_label].value_counts().index[0]  # Most common label in the split
         this_branch = Branch((k, ('END', label)))
         return this_branch
 
-    best_feature = evaluate_feature(df, YLabel, df.columns[0])
+    best_feature = evaluate_feature(df, y_label, df.columns[0])
     for col in df.columns[1:-1]:  # Exclude first feature and last label column
-        result = evaluate_feature(df, YLabel, col)
+        result = evaluate_feature(df, y_label, col)
         if result[2] < best_feature[2]:
             best_feature = result
 
@@ -85,12 +85,12 @@ def branch(df, YLabel, k, n):
 
     if len(new_df1) == 0 or len(new_df2) == 0:
         # If any branch is empty, stop branching
-        label = df[YLabel].value_counts().index[0]
+        label = df[y_label].value_counts().index[0]
         this_branch = Branch((k, ('END', label)))
         return this_branch
 
-    this_branch.left_branch = branch(new_df1, YLabel, k + 1, n)
-    this_branch.right_branch = branch(new_df2, YLabel, k + 1, n)
+    this_branch.left_branch = branch(new_df1, y_label, k + 1, n)
+    this_branch.right_branch = branch(new_df2, y_label, k + 1, n)
     return this_branch
 
 
