@@ -8,28 +8,12 @@ class DecisionTree:
         self.left_branch = None
         self.right_branch = None
 
-    def __str__(self):
-        return (f"DecisionTree:\n"
-                f"  Root Rule: {self.root_rule}\n"
-                f"  Left Branch: {self._str_branch(self.left_branch)}\n"
-                f"  Right Branch: {self._str_branch(self.right_branch)}\n")
-
-    def _str_branch(self, branch):
-        if branch is None:
-            return "None"
-        return (f"Rule: {branch.rule}\n"
-                f"    Left: {self._str_branch(branch.left_branch)}\n"
-                f"    Right: {self._str_branch(branch.right_branch)}")
-
 
 class Branch:
     def __init__(self, rule):
         self.rule = rule
         self.left_branch = None
         self.right_branch = None
-
-    def __str__(self):
-        return f"Branch: {self.rule}"
 
 
 def evaluate_feature(df, label, feature):
@@ -159,60 +143,76 @@ def main():
     df = pd.read_csv('../datasets/data_classification/iris.csv', header=None, delimiter=';',
                      names=['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'species'])
 
+    # Split data into train and test sets
     train_X = df.sample(frac=0.8)
     test_X = df.drop(train_X.index)
     print(f"Train: {train_X.shape}, Test: {test_X.shape}")
 
+    # Train model on training data
     model = decision_tree_train(train_X, "species")
-    print(model)
 
-    # Predict
-    predictions = decision_tree_predict(test_X, model)
-    print(f"Predictions: {set(predictions)}")
+    # Predict on train set
+    train_predictions = decision_tree_predict(train_X, model)
+    train_accuracy = sklearn.metrics.accuracy_score(train_X.species, train_predictions)
+    print(f"Train Accuracy: {train_accuracy}")
 
-    results = sklearn.metrics.accuracy_score(test_X.species, predictions)
-    print(f"Accuracy: {results}")
+    # Predict on test set
+    test_predictions = decision_tree_predict(test_X, model)
+    test_accuracy = sklearn.metrics.accuracy_score(test_X.species, test_predictions)
+    print(f"Test Accuracy: {test_accuracy}\n")
 
-    print(f"Feature: {evaluate_feature(df, 'species', 'sepal_length')}")
-    print(f"Feature: {evaluate_feature(df, 'species', 'sepal_width')}")
-    print(f"Feature: {evaluate_feature(df, 'species', 'petal_length')}")
-    print(f"Feature: {evaluate_feature(df, 'species', 'petal_width')}")
-
-    print('\n' + '*' * 50 + '\n')
-
+    # Repeat for Titanic dataset
     df_titanic = pd.read_csv("../datasets/data_classification/titanic_preprocessed.csv", sep=",",
                              index_col='PassengerId')
     df_titanic = df_titanic[[c for c in df_titanic if c not in ['Survived']] + ['Survived']]
-    print(df_titanic.columns)
 
     train_X = df_titanic.sample(frac=0.8)
     test_X = df_titanic.drop(train_X.index)
-    print(test_X.shape)
 
     model = decision_tree_train(train_X, "Survived")
-    print(model)
 
-    # Predict
-    predictions = decision_tree_predict(test_X, model)
-    print(set(predictions))
+    # Predict on train set
+    train_predictions = decision_tree_predict(train_X, model)
+    train_accuracy = sklearn.metrics.accuracy_score(train_X["Survived"], train_predictions)
+    print(f"Train Accuracy (Titanic): {train_accuracy}")
 
-    results = sklearn.metrics.accuracy_score(test_X["Survived"], predictions)
-    print(results)
+    # Predict on test set
+    test_predictions = decision_tree_predict(test_X, model)
+    test_accuracy = sklearn.metrics.accuracy_score(test_X["Survived"], test_predictions)
+    print(f"Test Accuracy (Titanic): {test_accuracy}\n")
 
-    # Check the depth for 1 - 15 levels
     for i in range(1, 16):
+        train_X = df_titanic.sample(frac=0.8)
+        test_X = df_titanic.drop(train_X.index)
+
         model = decision_tree_train(train_X, "Survived", n_levels=i)
-        predictions = decision_tree_predict(test_X, model)
-        results = sklearn.metrics.accuracy_score(test_X["Survived"], predictions)
-        print(f"Depth: {i} Accuracy: {results}")
 
-    model = decision_tree_train(train_X, "Survived", n_levels=30, verbose=False)  # No limit on n levels
-    predictions = decision_tree_predict(test_X, model)
-    print(f"n_levels = 30, accuracy = {sklearn.metrics.accuracy_score(test_X.Survived, predictions)}")
+        # Predict on train set
+        train_predictions = decision_tree_predict(train_X, model)
+        train_accuracy = sklearn.metrics.accuracy_score(train_X["Survived"], train_predictions)
+        print(f"Train Accuracy (Titanic) with depth {i}: {train_accuracy}")
 
-    model = decision_tree_train(train_X, "Survived", n_levels=50, verbose=False)  # No limit on n levels
-    predictions = decision_tree_predict(test_X, model)
-    print(f"n_levels = 50, accuracy = {sklearn.metrics.accuracy_score(test_X.Survived, predictions)}")
+        # Predict on test set
+        test_predictions = decision_tree_predict(test_X, model)
+        test_accuracy = sklearn.metrics.accuracy_score(test_X["Survived"], test_predictions)
+        print(f"Test Accuracy (Titanic) with depth {i}: {test_accuracy}\n")
+
+    # do the same for depth 30 and 50
+    for i in [30, 50]:
+        train_X = df_titanic.sample(frac=0.8)
+        test_X = df_titanic.drop(train_X.index)
+
+        model = decision_tree_train(train_X, "Survived", n_levels=i)
+
+        # Predict on train set
+        train_predictions = decision_tree_predict(train_X, model)
+        train_accuracy = sklearn.metrics.accuracy_score(train_X["Survived"], train_predictions)
+        print(f"Train Accuracy (Titanic) with depth {i}: {train_accuracy}")
+
+        # Predict on test set
+        test_predictions = decision_tree_predict(test_X, model)
+        test_accuracy = sklearn.metrics.accuracy_score(test_X["Survived"], test_predictions)
+        print(f"Test Accuracy (Titanic) with depth {i}: {test_accuracy}\n")
 
 
 if __name__ == "__main__":
