@@ -81,3 +81,15 @@ předzpracovaná do číselné podoby
 viz [notebook](https://homel.vsb.cz/~pro0199/files/su_cv5_titanic_classification_preprocess.ipynb).
 Proveďte vyhodnocení trénovací a testovací přesnosti bez omezení maximální hloubky i při nastavení parametru maximální
 hloubky z intervalu <1, 15>. Dochází v tomto případě k efektům zvaných _overfitting_ nebo _underfitting_?
+
+### Cvičení 6 - Klasifikace Sklearn
+
+Cílem první části cvičení je aplikace základních klasifikačních algoritmů na Titanic dataset a následné ohodnocení
+přesnosti klasifikačních modelů z pohledu různých metrik a validačních přístupů, včetně jejich výhod a nevýhod.
+
+Ve druhé části cvičení je vaším úkolem aplikovat na dataset algoritmus SVM **(1b)** s různými konfiguracemi parametrů a
+vyhodnotit jejich vliv (základní grid search finetuning).
+
+Stejnou úlohu budete následně řešit i pro algoritmus MLP **(1b)**.
+
+Bonusovou úlohou **(1b)** je využití frameworku (knihovny) Optuna pro hledání optimálních parametrů klasifikační metody.
