@@ -83,3 +83,7 @@ vyhodnotit jejich vliv (základní grid search finetuning).
 Stejnou úlohu budete následně řešit i pro algoritmus MLP **(1b)**.
 
 Bonusovou úlohou **(1b)** je využití frameworku (knihovny) Optuna pro hledání optimálních parametrů klasifikační metody.
+
+## Cvičení 7 - Regrese
+
+V rámci tohoto cvičení budeme řešit regresní úlohu v kombinaci s metodami pro výběr atributů.
