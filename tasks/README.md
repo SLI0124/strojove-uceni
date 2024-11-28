@@ -87,3 +87,35 @@ Bonusovou úlohou **(1b)** je využití frameworku (knihovny) Optuna pro hledán
 ## Cvičení 7 - Regrese
 
 V rámci tohoto cvičení budeme řešit regresní úlohu v kombinaci s metodami pro výběr atributů.
+
+## Cvičení 8 - Imbalanced learning + Kaggle soutěž
+
+V první části cvičení jsou demonstrovány možné přístupy pro práci s nevyváženými
+datasety. [Šablona pro práci na cvičení](https://homel.vsb.cz/~pro0199/files/su_cv8_imbalanced_data_ensemble_methods.ipynb).
+
+### Kaggle soutěž
+
+Samostatná práce dnešního týdne spočívá v zapojení se do soutěže v kvalitě predikcí na webu Kaggle.
+
+1. Připojte se k soutěži skrze [odkaz](https://www.kaggle.com/t/507a848f9c1f48c28aff93b8d6a4fcc7).
+2. Ze záložky Code můžete vytvořit nový notebook tlačítkem New Notebook. Můžete se také inspirovat mou šablonou
+   [basic-submission-2024.ipynb](https://homel.vsb.cz/~pro0199/files/basic-submission-2024.ipynb), kterou jsem generoval
+   submission pro baseline skóre.
+3. Vlastní práce na nejlepším modelu pro predikce.
+    - Vyzkoušejte různé modely.
+    - Experimentujte s parametry v rámci hledání vhodného nastavení klasifikačních metod.
+    - Zvažte feature engineering nebo feature selection.
+    - Zvažte využití imbalanced learning přístupů.
+4. Nasdílejte mně váš nejlepší notebook. V rámci editace notebooku v pravém horním rohu Share a poté vyhledejte
+   uživatele PetrProkop.
+5. Vyhodnocení soutěže. Deadline je nastaven na středu 4. 12. 2024 23:55.
+
+#### Hodnocení:
+
+- Zisk 1 b. skóre v Leaderboard >= 0.32.
+- Zisk 2 b. skóre v Leaderboard v top 50 % v porovnání s kolegy.
+- Pro získání bodů je třeba se mnou sdílet Jupyter notebook pro dané submission skóre. Budu kontrolovat, jak jste pro
+  predikci postupovali.
+- TOP 1 řešení v rámci Leaderboard má možnost získat 2 body z úlohy + 25 bodů z klasifikačního projektu. Podmínkou je
+  férové vypracování = neporušení podmínek. Dále příprava popisu vlastního řešení úlohy a následná krátká prezentace (
+  max 10 minut).
