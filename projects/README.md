@@ -56,7 +56,7 @@ Výběr dat:
 - Čemu se věnovat (bude záležet na povaze vašeho datasetu): krosvalidace, výběr optimálních parametrů modelu, výběr
   atributů, řešení nevyváženosti tříd, atd.
 - Jeden projekt věnující se klasifikaci dat jste už zpracovávali, očekávám, že zkusíte posunout úroveň projektu.
-  Jako podpůrný materiál pro zadání si můžete prohlénout “checklist“.
+  Jako podpůrný materiál pro zadání si můžete prohlénout “*[checklist](checklist.md)*“.
 - Povinou částí je **závěrečné shrnutí**, kde porovnáte dosažené výsledky.
 - Formou vypracování je Jupyter Notebook s kódy a interpretací vizualizací nebo PDF report + zdrojové kódy.
   Odhadovaná náročnost pro projekt je 3-6 hodin. Tento odhad můžete použít jako vodítko pro velikost analýzy.
