@@ -119,3 +119,41 @@ Samostatná práce dnešního týdne spočívá v zapojení se do soutěže v kv
 - TOP 1 řešení v rámci Leaderboard má možnost získat 2 body z úlohy + 25 bodů z klasifikačního projektu. Podmínkou je
   férové vypracování = neporušení podmínek. Dále příprava popisu vlastního řešení úlohy a následná krátká prezentace (
   max 10 minut).
+
+### Cvičení 9 - Forecasting
+
+Na tomto cvičení si vyzkoušíte predikci časových řad při úloze predikce spotřeby plynu.
+
+[Šablona pro práci na cvičení](https://homel.vsb.cz/~pro0199/files/su_cv9_forecasting.ipynb)
+
+## Cvičení 10 - Deploy pro ML model
+
+**Toto cvičení již není bodované.**
+
+Cílem cvičení je vytvořit model strojového učení, který bude schopen predikovat přežití cestujících na Titaniku 2.0. Pro
+model je třeba vytvořit jednoduchou webovou aplikaci, která umožní získat predikce dle zadaných dat. Sklearn model
+natrénujte a uložte. Ve webové aplikaci načtěte natrénovaný model a využijte jej pro predikce.
+
+1. Vytvořte model pro predikci přežití na Titanicu.
+    - Načtěte Titanic data, prověďte preprocessing dat (nemusíte použít všechny atributy pro predikci, nemusíte trénovat
+      na
+      všech záznamech).
+        - Natrénujte libovolný klasifikační model.
+        - Můžete využít nástrojů z sklearn.pipeline nebo sklearn.compose pro zkombinování do jednoho objektu.
+2. Model serializujte pro jeho následné použití ve webové aplikaci.
+    - Můžete využít např. Pickle pro snadnou serializaci.
+3. Vytvořte webovou aplikaci/službu pro získávání predikcí.
+    - Jedna z možností je využít Flask pro vytvoření jednoduchého API, které pro zadané parametry v JSON formátu
+      vrátí predikci modelu.
+    - Otestujte vaši webovou aplikaci v predikcích pro reálné nebo vymyšlené vstupy (příklad 2 reálné z datasetu a 1
+      vymyšlený):
+        - {“Age”: 22, “Fare”: 7.25, “SibSp”: 1, “Parch”: 0, “Pclass”: 3, “Embarked”: “S”, “Sex”: “male”}
+        - {“Age”: 38, “Fare”: 71.2833, “SibSp”: 1, “Parch”: 0, “Pclass”: 1, “Embarked”: “C”, “Sex”: “female”}
+        - {“Age”: 18, “Fare”: 10, “SibSp”: 1, “Parch”: 2, “Pclass”: 2, “Embarked”: “S”, “Sex”: “male”}
+
+Cíl cvičení je vyzkoušet si nasazení modelu skrz webovou službu. Zmíněné technologie jsou tudíž pouze orientační, výběr
+nechám na vás (serializace pomocí ONNX, webová aplikace vytvořená jiným způsobem, apod.)
+
+Základ k tématice nasazování modelů [PDF](https://homel.vsb.cz/~pro0199/files/deployment_of_ml_models.pdf).
+
+**Toto cvičení již není bodované.**
